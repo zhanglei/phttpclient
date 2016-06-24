@@ -1,0 +1,13 @@
+// $Id$
+// vim:ft=javascript
+
+// If your extension references something external, use ARG_WITH
+// ARG_WITH("phttpclient", "for phttpclient support", "no");
+
+// Otherwise, use ARG_ENABLE
+// ARG_ENABLE("phttpclient", "enable phttpclient support", "no");
+
+if (PHP_PHTTPCLIENT != "no") {
+	EXTENSION("phttpclient", "phttpclient.c");
+}
+
