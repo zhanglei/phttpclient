@@ -562,10 +562,10 @@ static void phttpclient_get_contents(zval *zresponse, char *host, int host_len, 
     ctx->parser.data = ctx;
 
 	int count = 0;
-	char buff[1024];
+	char buff[16384];
 	long parsed_n = 0;
 	while(!php_stream_eof(stream)) {
-		count = php_stream_read(stream, buff, 1024);
+		count = php_stream_read(stream, buff, 16384);
 		
 		/*
 		  超时的情况下count = 0 \main\streams\xp_socket.c php_sockop_read
