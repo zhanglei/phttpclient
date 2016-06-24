@@ -178,3 +178,65 @@ Array
 100001 ERROR_PARSE_ERROR
 ```
 
+
+
+## 性能测试
+
+在virtualbox中运行的ubuntu，php 5.4.41
+
+服务端代码：
+```php
+$serv = new swoole_http_server("127.0.0.1", 9502);
+$serv->on('Request', function($request, $response) {
+    $response->end("Hello, swoole!\n");
+});
+
+$serv->start();
+
+```
+测试代码：
+```php
+date_default_timezone_set('PRC');
+ini_set('memory_limit','20M');
+
+$url = "http://192.168.xx.xx:80/";
+
+$get = 'phttp_get';
+
+$opt = array(
+	'headers' => array(
+		'User-Agent'=>'mine',
+	),
+	'timeout' => 1,
+);
+
+function phttp_get2($url, $opt){
+	$a= file_get_contents($url);
+	return array('body'=>$a);
+}
+
+function phttp_get3($url, $opt){
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$output = curl_exec($ch);
+	curl_close($ch);
+	return array('body'=>$output);
+}
+
+$i=0;
+$a = '';
+while($i++<10){
+	$a = $get($url, $opt);
+}
+print_r($a);
+```
+测试结果如下：
+```
+//ab -n5000 -c8 -k  "http://127.0.0.1:8080/a.php"
+
+phttp_get               711 QPS
+file_get_contents       487 QPS
+curl                    394 QPS
+
+```
